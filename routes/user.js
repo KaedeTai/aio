@@ -19,7 +19,7 @@ app.get('/:id', async((req, res) => {
   if (affected != 1)
     return res.send({error: 1, message: 'update user failed'});
 
-  // Step 2: get user id, read test.txt, google pizza at the same time
+  // Step 2: get user by id, read test.txt, google pizza at the same time
   try {
     var rs = await([User(id), File('test.txt'), Google('pizza')]);
   } catch (e) {
