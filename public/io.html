@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API socket.io example</title>
+</head>
+<body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io.connect('http://localhost:3000');
+  socket.on('news', function (data) {
+    console.log(data);
+    document.body.innerHTML = data.hello;
+    socket.emit('my other event', { my: 'data' });
+  });
+</script>
+</body>
+</html>
