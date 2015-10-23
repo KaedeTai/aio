@@ -1,4 +1,4 @@
-var DB = require('./DB');
+var DB = require('../utils/DB');
 
 // User(1);
 User = id => DB.one('SELECT * FROM user WHERE id=?', [id]);
