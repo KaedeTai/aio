@@ -14,9 +14,8 @@ app.get('/:id', async((req, res) => {
   // Step 1: update user state
   var id = req.params.id;
   var rs = await(User.setState(id, 'count = ' + ++ i));
-  var affected = rs[0].affectedRows;
-  console.log(affected);
-  if (affected != 1)
+  console.log(rs);
+  if (rs.affectedRows != 1)
     return res.send({error: 1, message: 'update user failed'});
 
   // Step 2: get user by id, read test.txt, google pizza at the same time
@@ -25,7 +24,7 @@ app.get('/:id', async((req, res) => {
   } catch (e) {
     return res.send(e);
   }
-  var result = {user: rs[0][0][0], file: rs[1], google: rs[2].length};
+  var result = {user: rs[0], file: rs[1], google: rs[2].length};
   console.log(result);
   res.send(result);
 }));
