@@ -5,8 +5,8 @@ var await = require('asyncawait/await');
 
 // Include models
 var User = require('../models/User');
-var File = require('../models/File');
-var Google = require('../models/Google');
+var File = require('../utils/File');
+var Google = require('../utils/Google');
 
 // Sample API
 var i = 0;
@@ -20,11 +20,11 @@ app.get('/:id', async((req, res) => {
 
   // Step 2: get user by id, read test.txt, google pizza at the same time
   try {
-    var rs = await([User(id), File('test.txt'), Google('pizza')]);
+    var [user, file, google] = await([User(id), File('test.txt'), Google('pizza')]);
   } catch (e) {
     return res.send(e);
   }
-  var result = {user: rs[0], file: rs[1], google: rs[2].length};
+  var result = {user: user, file: file, google: google.length};
   console.log(result);
   res.send(result);
 }));
