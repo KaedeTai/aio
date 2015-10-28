@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>user1</title>
+<title>user2</title>
 </head>
 <body>
 <div id="rooms"></div>
@@ -17,7 +17,7 @@ var socket = io.connect(location.origin);
 // When server say hello
 socket.on('hello', function (hello) {
   console.log(hello);
-  socket.emit('login', 'token1');
+  socket.emit('login', 'token2');
 });
 
 // Get user rooms
