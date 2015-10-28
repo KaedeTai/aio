@@ -18,11 +18,14 @@ var app = express()
 // Enable cookie-session
 .use(require('cookie-session')(({ secret: 'Secret!!', cookie: { maxAge: 60 * 60 * 1000 }})))
 
-// Serve static files
-.use('/', express.static('public'))
+// Add res.ok(), res.err(), and res.rtn()
+.use(require('./utils/middleware')())
 
 // Include user module
 .use('/user', require('./routes/user'))
+
+// Serve static files
+.use('/', express.static('public'))
 
 // Handle error message
 .use((err, req, res, next) => res.send({error: 1, message: err.message}));
