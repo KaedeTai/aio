@@ -19,11 +19,7 @@ app.get('/:id', api((req, res) => {
     return res.err(1, 'update user failed');
 
   // Step 2: get user by id, read test.txt, google pizza at the same time
-  try {
-    var [user, file, google] = await([User(id), FS('test.txt'), Google('pizza')]);
-  } catch (e) {
-    return res.err(-1, 'unknown error', e);
-  }
+  var [user, file, google] = await([User(id), FS('test.txt'), Google('pizza')]);
   var result = {user: user, file: file, google: google.length};
   console.log(result);
   res.ok(result);
