@@ -13,9 +13,7 @@ var i = 0;
 app.get('/:id', api((req, res) => {
   // Step 1: update user state
   var id = req.params.id;
-console.log(1);
   var rs = await(User.setState(id, 'count = ' + ++ i));
-console.log(2);
   console.log(rs);
   if (rs.affectedRows != 1)
     return res.err(1, 'update user failed');
