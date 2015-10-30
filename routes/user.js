@@ -1,5 +1,4 @@
 // Create app
-var app = require('express').Router();
 var api = require('../utils/api');
 var await = require('asyncawait/await');
 
@@ -10,7 +9,7 @@ var Google = require('../utils/Google');
 
 // Sample API
 var i = 0;
-app.get('/:id', api((req, res) => {
+api('/:id', (req, res) => {
   // Step 1: update user state
   var id = req.params.id;
   var rs = await(User.setState(id, 'count = ' + ++ i));
@@ -23,6 +22,6 @@ app.get('/:id', api((req, res) => {
   var result = {user: user, file: file, google: google.length};
   console.log(result);
   res.ok(result);
-}));
+});
 
-module.exports = app;
+module.exports = api.app;

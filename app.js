@@ -4,22 +4,19 @@ var bodyParser = require('body-parser');
 var app = express()
 
 // Enable encoded URL (optional)
-.use(bodyParser.urlencoded({extended: true}))
+//.use(bodyParser.urlencoded({extended: true}))
 
 // Enable JSON (optional)
-.use(bodyParser.json())
+//.use(bodyParser.json())
 
 // Enable gzip
-.use(require('compression')())
+//.use(require('compression')())
 
 // Enable cookie
-.use(require('cookie-parser')())
+//.use(require('cookie-parser')())
 
 // Enable cookie-session
-.use(require('cookie-session')(({ secret: 'Secret!!', cookie: { maxAge: 60 * 60 * 1000 }})))
-
-// Add res.ok(), res.err(), and res.rtn()
-.use(require('./utils/middleware')())
+//.use(require('cookie-session')(({ secret: 'Secret!!', cookie: { maxAge: 60 * 60 * 1000 }})))
 
 // Include user module
 .use('/user', require('./routes/user'))
