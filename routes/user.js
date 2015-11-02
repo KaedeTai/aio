@@ -1,5 +1,5 @@
 // Create app
-var api = require('../utils/api');
+var api = require('../utils/api')('/user');
 var await = require('asyncawait/await');
 
 // Include models
@@ -9,7 +9,7 @@ var Google = require('../utils/Google');
 
 // Sample API
 var i = 0;
-api('/:id', (req, res) => {
+api.get('/count/:id', (req, res) => {
   // Step 1: update user state
   var id = req.params.id;
   var rs = await(User.setState(id, 'count = ' + ++ i));
@@ -24,4 +24,12 @@ api('/:id', (req, res) => {
   res.ok(result);
 });
 
-module.exports = api.app;
+api.unit('/get', {id: 3});
+api.get('/get', {id: 'user'}, (req, res) => {
+  res.ok(req.user);
+});
+
+api.help('/help');
+api.test('/test', 'http://localhost:3000');
+
+module.exports = api;
