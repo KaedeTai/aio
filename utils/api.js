@@ -124,7 +124,7 @@ var api = base => {
   api._get = api.get;
   api._post = api.post;
 
-  var help = {'get': {}, 'post': {}};
+  var help = {};
   var unit = {};
 
   api.get = (route, rules, func) => {
@@ -132,7 +132,7 @@ var api = base => {
       func = rules;
       rules = {};
     }
-    help.get[base + route] = rules;
+    help[base + route] = {get: rules};
     api._get(route, callback(rules, func));
     return api;
   };
@@ -142,7 +142,7 @@ var api = base => {
       func = rules;
       rules = {};
     }
-    help.post[base + route] = rules;
+    help[base + route] = {post: rules};
     api._post(route, require('connect-multiparty')(), callback(rules, func));
     return api;
   };
@@ -158,16 +158,11 @@ var api = base => {
   };
 
   api.test = (route, uri) => {
-    var jobs = [];
+    var jobs = {};
     for (var path in unit)
-      jobs.push(Get.json(uri + path, unit[path]).catch(err => err));
-    api._get(route, async((req, res) => {
-      var result = await(jobs);
-      var i = 0, report = {};
-      for (var path in unit)
-        report[path] = result[i ++];
-      res.json(report);
-    }));
+      jobs[base + path] = Get.json(uri + base + path, unit[path]);
+    api._get(route, async((req, res) =>
+      res.json(await(jobs))));
     return api;
   };
 
