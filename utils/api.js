@@ -158,10 +158,10 @@ var api = base => {
   };
 
   api.test = (route, uri) => {
-    var jobs = {};
+    var Jobs = {};
     for (var path in unit)
-      jobs[base + path] = Get.json(uri + base + path, unit[path]);
-    api._get(route, async((req, res) => res.json(await(jobs))));
+      Jobs[base + path] = Get.json(uri + base + path, unit[path]);
+    api._get(route, async((req, res) => res.json(await(Jobs))));
     return api;
   };
 
