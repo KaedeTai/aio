@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "pm2 start www --watch --node-args='--harmony_destructuring'"
+    "start": "pm2 start www --watch"
   },
   "dependencies": {
     "debug": "~2.2.0",
