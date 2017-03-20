@@ -2,18 +2,24 @@
 var api = require('../api')('/car');
 var config = require('../config');
 var moment = require('moment');
+var DB = require('../utils/DB');
 
 // Include models
 var Car = require('../models/Car');
 
-api.unit('/get', {car_id: 1});
-api.get('/get', {car_id: 'int'}, (req, res) => {
-  res.ok(Car(req.query.car_id));
+api.unit('/new', {name: 'test'});
+api.get('/new', {name: /.+/}, (req, res) => {
+  res.ok(DB.insert('car', {name: req.query.name}));
 });
 
-api.unit('/delete', {car_id: 1});
-api.get('/delete', {car_id: 'int'}, (req, res) => {
-  res.ok(Car.delete(req.query.car_id));
+api.unit('/get', {id: 1});
+api.get('/get', {id: 'int'}, (req, res) => {
+  res.ok(Car(req.query.id));
+});
+
+api.unit('/delete', {id: 1});
+api.get('/delete', {id: 'int'}, (req, res) => {
+  res.ok(Car.delete(req.query.id));
 });
 
 api.help('/help');
