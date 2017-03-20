@@ -1,9 +1,10 @@
-#!/usr/bin/env node --harmony_destructuring
+#!/usr/bin/env node
 
 /**
  * Module dependencies.
  */
 
+var config = require('./config');
 var server = require('./io');
 var debug = require('debug')('api:server');
 
@@ -11,7 +12,7 @@ var debug = require('debug')('api:server');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || config.listen);
 
 /**
  * Listen on provided port, on all network interfaces.

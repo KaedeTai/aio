@@ -1,7 +1,9 @@
 var async = require('asyncawait/async');
 var await = require('asyncawait/await');
-var User = require('../models/User');
-var Get = require('../utils/Get');
+var config = require('./config');
+//var User = require('./models/User');
+var Get = require('./utils/Get');
+var Post = require('./utils/Post');
 
 var dump = i => {
   var o = {};
@@ -50,6 +52,10 @@ var check = (key, value, rule) => {
     // int
     if (!/-?[0-9]+/.test(value) || isNaN(parseInt(value)))
       throw [-8, "value '" + value + "' of parameter '" + key + "' is not an integer"];
+  } else if (rule === Object(rule)) {
+    // object
+    if (value === Object(value))
+      throw [-9, "value '" + value + "' of parameter '" + key + "' is not an object"];
   } else if (rule == 'date') {
     // date
     //TODO
@@ -76,12 +82,13 @@ var callback = (rules, func) =>
     try {
       req.checked = {};
 
+      var query = (req.method == 'POST')? req.body: req.query;
       for (var key in rules) {
         // optional
         if (key == '_') {
           for (var _key in rules['_']) {
-            if (_key in req.query) {
-              var value = req.query[_key];
+            if (_key in query) {
+              var value = query[_key];
               check(_key, value, rules['_'][_key]);
               req.checked[_key] = value;
             }
@@ -95,14 +102,14 @@ var callback = (rules, func) =>
           continue;
         }
 
-        var value = req.query[key];
+        var value = query[key];
         if (typeof value === 'undefined')
           throw [-2, "missing parameter '" + key + "'"];
 
         if (rules[key] == 'user') {
           // get user from id
-          req.user = await(User(value));
-          if (!req.user) throw [-1, 'please login'];
+          req.user = {};//User(value);
+          if (!req.user) throw [-1, '請重新登入！'];
         }
         else {
           check(key, value, rules[key]);
@@ -153,15 +160,22 @@ var api = base => {
   };
 
   api.unit = (route, qs) => {
-    unit[route] = qs;
+    if (!unit[route])
+      unit[route] = [];
+    unit[route].push(qs);
     return api;
   };
 
-  api.test = (route, uri) => {
+  api.test = (route) => {
     api._get(route, async((req, res) => {
       var Jobs = {};
+      var http = Get.json;
       for (var path in unit)
-        Jobs[base + path] = Get.json(uri + base + path, unit[path]);
+        if (unit[path].length == 1)
+          Jobs[base + path] = http(config.uri + base + path, unit[path][0]);
+        else 
+          for (var i in unit[path])
+            Jobs[base + path + ':' + i] = http(config.uri + base + path, unit[path][i]);
       res.json(await(Jobs));
     }));
     return api;
