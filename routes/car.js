@@ -8,8 +8,8 @@ var DB = require('../utils/DB');
 var Car = require('../models/Car');
 
 api.unit('/new', {name: 'test'});
-api.get('/new', {name: /.+/}, (req, res) => {
-  res.ok(DB.insert('car', {name: req.query.name}));
+api.get('/new', {name: /.+/, brand_id: [1, 2]}, (req, res) => {
+  res.ok(DB.insert('car', {name: req.query.name, brand_id: req.query.brand_id}));
 });
 
 api.unit('/get', {id: 1});
