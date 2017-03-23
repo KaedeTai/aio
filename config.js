@@ -3,6 +3,7 @@ module.exports = {
   username: 'root',
   password: '',
   database: 'car',
+  mongodb: 'mongodb://localhost:27017/dbname',
   images: 'images',
   gcm_key: '',
   listen: '8080',
