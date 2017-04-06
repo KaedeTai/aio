@@ -7,9 +7,14 @@ var DB = require('../utils/DB');
 // Include models
 var Car = require('../models/Car');
 
+api.unit('/all', {});
+api.get('/all', {}, (req, res) => {
+  res.ok(Car.getAllInfo());
+});
+
 api.unit('/new', {name: 'test'});
 api.get('/new', {name: /.+/, brand_id: [1, 2]}, (req, res) => {
-  res.ok(DB.insert('car', {name: req.query.name, brand_id: req.query.brand_id}));
+  res.ok(DB.insert('car', req.query));
 });
 
 api.unit('/get', {id: 1});
