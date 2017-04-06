@@ -4,6 +4,7 @@ var config = require('./config');
 //var User = require('./models/User');
 var Get = require('./utils/Get');
 var Post = require('./utils/Post');
+var File = require('./utils/File');
 
 var dump = i => {
   var o = {};
@@ -72,6 +73,13 @@ var callback = (rules, func) =>
       else
         res.json(json);
     };
+
+    res.render = (data, file) => {
+      var values = [];
+      for (var key in data)
+        values.push('data.' + key + ' = ' + JSON.stringify(data[key]) + ';');
+      res.end(File(file).replace('//data//', values.join('\n')));
+    }
 
     res.ok = (data) =>
       res.rtn({code: 0, message: 'ok', data: data});
