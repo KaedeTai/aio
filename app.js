@@ -24,6 +24,7 @@ var app = express()
 .use(require('morgan')(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"'))
 
 // Include user module
+.use('/', require('./routes/index'))
 .use('/car', require('./routes/car'))
 //新模組請加在這裏
 

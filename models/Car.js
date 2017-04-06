@@ -1,7 +1,7 @@
 var DB = require('../utils/DB');
 
 //可以不換行，DB.one('xxx') 跟 DB('xxx')[0] 是一樣的意思，只取第一筆
-Car = (id) => DB.select('car', {id: id});
+Car = (id) => DB.one('SELECT * FROM car WHERE id=?', [id]);
 
 //也可以換行，下 INSERT/UPDATE/DELETE 只能用 DB('xxx') 不能用 DB.one('xxx')
 Car.delete = (id) => DB(`
