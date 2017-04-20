@@ -9,6 +9,8 @@
     "asyncawait": "~1.0.1",
     "bluebird": "~2.10.2",
     "body-parser": "~1.14.1",
+    "chrome-remote-interface": "^0.19.1",
+    "chromium-headless-client": "^1.0.2",
     "compression": "~1.6.0",
     "connect-multiparty": "~2.0.0",
     "cookie-parser": "~1.4.0",
