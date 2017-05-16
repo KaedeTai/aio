@@ -3,6 +3,7 @@
 var config = require('./config');
 var express = require('express');
 var bodyParser = require('body-parser');
+var cacheManifest = require('connect-cache-manifest')
 var app = express()
 
 // Enable URL-encoded bodies (optional)
@@ -31,6 +32,18 @@ var app = express()
 // Serve static files
 .use('/', express.static('public'))
 .use('/', express.static(config.images))
+
+// Manage cache.manifest
+.use(cacheManifest({
+  manifestPath: '/cache.manifest',
+  files: [{
+    dir: __dirname + '/public',
+    prefix: '/'
+  }],
+  networks: ['*'],
+  fallbacks: []
+}))
+
 
 // Handle error message
 .use((err, req, res, next) => res.send({error: 1, message: err.message}));

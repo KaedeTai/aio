@@ -12,6 +12,7 @@
     "chrome-remote-interface": "^0.19.1",
     "chromium-headless-client": "^1.0.2",
     "compression": "~1.6.0",
+    "connect-cache-manifest": "^0.2.2",
     "connect-multiparty": "~2.0.0",
     "cookie-parser": "~1.4.0",
     "cookie-session": "~1.2.0",
