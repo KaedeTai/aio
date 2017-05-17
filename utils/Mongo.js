@@ -5,9 +5,9 @@ var config = require('../config');
 
 var db;
 
-var Mongo = (collection, find, fields) => {
+var Mongo = (collection, find, fields, sort) => {
   if (!db) db = await(mongo.connectAsync(config.mongodb));
-  var cursor = await(db.collection(collection).find(find, fields));
+  var cursor = await(db.collection(collection).find(find, fields).sort(sort));
   var arr = [];
   var next = promise.promisifyAll(cursor);
   while (item = await(cursor.nextAsync())) {
