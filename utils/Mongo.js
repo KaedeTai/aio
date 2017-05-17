@@ -5,15 +5,30 @@ var config = require('../config');
 
 var db;
 
-var Mongo = (collection, find) => {
+var Mongo = (collection, find, fields) => {
   if (!db) db = await(mongo.connectAsync(config.mongodb));
-  var cursor = await(db.collection(collection).find(find));
+  var cursor = await(db.collection(collection).find(find, fields));
   var arr = [];
   var next = promise.promisifyAll(cursor);
   while (item = await(cursor.nextAsync())) {
     arr.push(item);
   }
   return arr;
+}
+
+Mongo.insert = (collection, insert) => {
+  if (!db) db = await(mongo.connectAsync(config.mongodb));
+  return await(db.collection(collection).insertOne(insert));
+}
+
+Mongo.update = (collection, update, set) => {
+  if (!db) db = await(mongo.connectAsync(config.mongodb));
+  return await(db.collection(collection).updateOne(update, {$set: set}));
+}
+
+Mongo.remove = (collection, remove) => {
+  if (!db) db = await(mongo.connectAsync(config.mongodb));
+  return await(db.collection(collection).removeOne(remove));
 }
 
 module.exports = Mongo;
