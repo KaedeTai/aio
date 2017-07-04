@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<link href="css/global.css" rel="stylesheet">
+	<link href="css/element-ui.css" rel="stylesheet">
+	<link href="css/admin.css" rel="stylesheet">
+	<script src="js/vue.js"></script>
+	<script src="js/element-ui.js"></script>
+	<script src="js/axios.js"></script>
+	<script src="js/api.js"></script>
+</head>
+<body class="season2">
+
+<div id="vue">
+
+<el-button @click="save" type="primary" icon="upload" class="save">儲存</el-button>
+
+<el-tabs v-model="tab" type="card">
+
+<el-tab-pane label="資訊" name="info">
+	商家名稱：<br>
+	<el-input v-model="shop.name"></el-input>
+	標籤：<br>
+	<el-select v-model="shop.tag" multiple placeholder="請選擇類別屬性" class="big">
+		<el-option v-for="t in tags" :label="t" :value="t"></el-option>
+	</el-select><br>
+	營業日：<br>
+	<el-select v-model="shop.day" multiple placeholder="請選擇營業日" class="big">
+		<el-option v-for="(d,i) in days" :label="d" :value="i"></el-option>
+	</el-select><br>
+	營業時間：<br>
+	<el-time-select placeholder="開始時間" v-model="shop.start" :picker-options="{start: '06:00', step: '00:15', end: '22:30'}" style="width: 150px"></el-time-select>
+	-
+	<el-time-select placeholder="結束時間" v-model="shop.end" :picker-options="{start: '06:00', step: '00:15', end: '22:30', minTime: shop.start}" style="width: 150px"></el-time-select>
+	<br>
+	負責人：<br>
+	<el-input v-model="shop.boss"></el-input>
+	電話：<br>
+	<el-input v-model="shop.phone"></el-input>
+	地址：<br>
+	<el-input v-model="shop.address"></el-input>
+	<iframe :src="'https://www.google.com.tw/maps?&output=embed&q=' + shop.address" class="map"></iframe>
+	簡介：<br>
+	<el-input v-model="shop.intro" type="textarea" autosize placeholder="請輸入簡介"></el-input>
+	<div v-html="shop.intro" class="block"></div>
+</el-tab-pane>
+
+<el-tab-pane label="影音" name="media">
+	<div v-for="(m, i) in shop.media" class="list">
+		<el-button @click="removeMedia(i)" class="delete" icon="delete"></el-button>
+		<img v-if="/^image/.test(m.type)" :src="m.src" class="media">
+		<video v-else-if="/^video/.test(m.type)" :src="m.src" :poster="m.src + '.png'" class="media" title="點一下顯示影片" controls></video>
+		<a v-else :href="m.src" v-text="m.name"></a>
+		<br>
+		<el-input v-model="m.desc" type="textarea" autosize placeholder="請輸入說明"></el-input>
+	</div>
+	<el-upload action="admin_shop_upload" :before-upload="upload" :on-progress="progress" :on-success="addMedia" :show-file-list="false" v-loading.fullscreen.lock="lock" :element-loading-text="percent">
+		<el-button type="primary" icon="upload2">上傳</el-button>
+	</el-upload>
+</el-tab-pane>
+
+<el-tab-pane label="活動" name="event">
+	<div v-for="(e, i) in shop.event" class="list">
+		<el-button @click="removeEvent(i)" class="delete" icon="delete"></el-button>
+		活動名稱：<br>
+		<el-input v-model="e.name"></el-input>
+		活動日期：<br>
+		<el-date-picker v-model="e.start" type="date" placeholder="開始日期" style="width: 150px"></el-date-picker>
+		-
+		<el-date-picker v-model="e.end" type="date" placeholder="結束日期" style="width: 150px"></el-date-picker>
+		<br>
+		活動說明：<br>
+		<el-input v-model="e.intro" type="textarea" autosize></el-input>
+		<div v-html="e.intro" class="block"></div>
+	</div>
+	<el-button @click="addEvent" icon="plus">新增</el-button>
+</el-tab-pane>
+
+<el-tab-pane label="訂位" name="order">
+	還在開發中
+</el-tab-pane>
+
+</el-tabs>
+
+</div>
+
+<script>
+
+var data = {
+	tab: 'info',
+	lock: false,
+	percent: '',
+	tags: ['餐廳', '咖啡', '旅館', '親子', '客家', '原民', '手作', '文化', '特色'],
+	days: ['週日', '週一', '週二', '週三', '週四', '週五', '週六'],
+	shop: {
+		id: 0,
+		name: '',
+		tag: [],
+		day: [],
+		start: null,
+		end: null,
+		boss: '',
+		phone: '',
+		address: '',
+		intro: '',
+		media: [],
+		event: [],
+	},
+};
+
+//data//
+
+var vue = new Vue({el: '#vue', data: data, methods: {
+	upload: function () {
+		vue.percent = '';
+		vue.lock = true;
+	},
+	progress: function (e) {
+		vue.percent = parseInt(e.percent * 10) / 10 + '%';
+	},
+/*
+	addMedia: function (e) {
+		var file = e.target.files[0];
+		var reader = new FileReader();
+		reader.onload = function (e) {
+			file.src = e.target.result;
+			vue.shop.media.push(file);
+		}
+		reader.readAsDataURL(e.target.files[0]);
+		e.target.value = '';
+	},
+*/
+	addMedia: function (result) {
+		vue.lock = false;
+		if (result.code != 0) return alert(result.message);
+		vue.shop.media.push(result.data);
+	},
+	removeMedia: function (i) {
+		if (confirm('確認刪除?')) vue.shop.media.splice(i, 1);
+	},
+	addEvent: function () {
+		vue.shop.event.push({name: '', intro: '', start: null, end: null});
+	},
+	removeEvent: function (i) {
+		if (confirm('確認刪除?')) vue.shop.event.splice(i, 1);
+	},
+	save: function () {
+		api('admin_shop_save', vue.shop, function () { alert('儲存成功！'); });
+	},
+}});
+
+</script>
+
+</body>
+</html>

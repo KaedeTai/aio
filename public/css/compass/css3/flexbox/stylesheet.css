@@ -1,0 +1,93 @@
+#vertical-center {
+  padding: 0;
+}
+#vertical-center li {
+  background: #CCC;
+  width: 15em;
+  margin: .5em;
+  height: 5em;
+  text-align: center;
+  vertical-align: text-top;
+  display: inline-block;
+  /* non-flexbox browsers */
+  display: -webkit-inline-flex;
+  display: inline-flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
+#flexible {
+  padding: 0;
+  text-align: center;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+#flexible li {
+  background: #CCC;
+  min-width: 12em;
+  margin: .5em;
+  padding: .5em;
+  display: inline-block;
+  /* non-flexbox browsers */
+  -webkit-flex: 1 0;
+  flex: 1 0;
+}
+
+#reorder {
+  width: 100%;
+  /* fix for old Firefox */
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+#reorder li:nth-child(even) {
+  background: #CCC;
+  -webkit-order: 1;
+  order: 1;
+}
+
+#layout {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+#layout header, #layout footer {
+  -webkit-flex: 1 0 100%;
+  flex: 1 0 100%;
+}
+#layout header {
+  background: #ffffcc;
+}
+#layout nav ul {
+  padding: 0;
+  margin: -.5em;
+  min-width: 100%;
+  /* fix for old Firefox */
+  display: -webkit-flex;
+  display: flex;
+}
+#layout nav li {
+  background: #CCC;
+  margin: .5em;
+  display: inline-block;
+  /* non-flexbox browsers */
+  -webkit-flex: 1 1 30%;
+  flex: 1 1 30%;
+}
+#layout article {
+  -webkit-flex: 2 1 30em;
+  flex: 2 1 30em;
+}
+#layout aside {
+  flex: 1 0 15em;
+  background: #ccccff;
+}
+#layout footer {
+  background: #80ff80;
+}

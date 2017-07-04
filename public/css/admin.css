@@ -1,0 +1,74 @@
+body {
+	padding: 5px;
+}
+
+.list {
+	border-width: 1px;
+	border-style: groove;
+	padding: 10px;
+	margin: 1px;
+	border-radius: 5px;
+	overflow: hidden;
+}
+
+.block {
+	border: 1px solid black;
+	padding: 10px;
+	overflow: hidden;
+}
+
+.save {
+	position: absolute;
+	right: 5px;
+	z-index: 1;
+}
+
+.delete {
+	position: absolute;
+	right: 10px;
+	z-index: 1;
+}
+
+.right {
+	float: right;
+}
+
+.nowrap {
+	white-space: nowrap;
+}
+
+.map {
+	width: 100%;
+	border: 0;
+}
+
+.media {
+	border: 1px solid black;
+	border-radius: 5px;
+	width: 100%;
+	max-width: 640px;
+}
+
+.big {
+	width: 100%;
+}
+
+table {
+	width: 100%;
+	table-layout: fixed;
+}
+
+th {
+	padding: 6px;
+	background-color: #eeeeee;
+}
+
+td.edit {
+	padding: 6px;
+}
+
+td.edit input {
+	border: 0;
+	width: 100%;
+	padding: 6px;
+}

@@ -1,0 +1,94 @@
+#demo {
+  overflow: hidden;
+  *zoom: 1;
+}
+
+.border-radius-example {
+  width: 125px;
+  height: 125px;
+  background: red;
+  margin: 20px;
+  float: left;
+  padding: 5px;
+}
+
+#border-radius {
+  -moz-border-radius: 25px;
+  -webkit-border-radius: 25px;
+  border-radius: 25px;
+}
+
+#border-radius-top-left {
+  -moz-border-radius-topleft: 25px;
+  -webkit-border-top-left-radius: 25px;
+  border-top-left-radius: 25px;
+}
+
+#border-radius-top-right {
+  -moz-border-radius-topright: 25px;
+  -webkit-border-top-right-radius: 25px;
+  border-top-right-radius: 25px;
+}
+
+#border-radius-bottom-left {
+  -moz-border-radius-bottomleft: 25px;
+  -webkit-border-bottom-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+}
+
+#border-radius-bottom-right {
+  -moz-border-radius-bottomright: 25px;
+  -webkit-border-bottom-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
+
+#border-radius-top {
+  -moz-border-radius-topleft: 25px;
+  -webkit-border-top-left-radius: 25px;
+  border-top-left-radius: 25px;
+  -moz-border-radius-topright: 25px;
+  -webkit-border-top-right-radius: 25px;
+  border-top-right-radius: 25px;
+}
+
+#border-radius-bottom {
+  -moz-border-radius-bottomleft: 25px;
+  -webkit-border-bottom-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  -moz-border-radius-bottomright: 25px;
+  -webkit-border-bottom-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
+
+#border-radius-left {
+  -moz-border-radius-topleft: 25px;
+  -webkit-border-top-left-radius: 25px;
+  border-top-left-radius: 25px;
+  -moz-border-radius-bottomleft: 25px;
+  -webkit-border-bottom-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+}
+
+#border-radius-right {
+  -moz-border-radius-topright: 25px;
+  -webkit-border-top-right-radius: 25px;
+  border-top-right-radius: 25px;
+  -moz-border-radius-bottomright: 25px;
+  -webkit-border-bottom-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
+
+#border-radius-combo {
+  -moz-border-radius-topleft: 40px;
+  -webkit-border-top-left-radius: 40px;
+  border-top-left-radius: 40px;
+  -moz-border-radius-topright: 5px;
+  -webkit-border-top-right-radius: 5px;
+  border-top-right-radius: 5px;
+  -moz-border-radius-bottomleft: 15px;
+  -webkit-border-bottom-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+  -moz-border-radius-bottomright: 30px;
+  -webkit-border-bottom-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+}

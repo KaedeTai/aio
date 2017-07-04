@@ -1,0 +1,17 @@
+.source {
+  -ms-flow-into: target;
+  -webkit-flow-into: target;
+  flow-into: target;
+  border: 10px solid green;
+  margin: 20px;
+  width: 200px;
+}
+
+.new-container {
+  -ms-flow-from: target;
+  -webkit-flow-from: target;
+  flow-from: target;
+  border: 10px solid red;
+  margin: 20px;
+  width: 200px;
+}

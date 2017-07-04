@@ -1,0 +1,26 @@
+#two-column {
+  -moz-column-count: 2;
+  -webkit-column-count: 2;
+  column-count: 2;
+  width: 300px;
+  margin-bottom: 20px;
+}
+
+#three-column {
+  -moz-column-count: 3;
+  -webkit-column-count: 3;
+  column-count: 3;
+  width: 300px;
+  margin-bottom: 20px;
+}
+
+#four-column-with-rule {
+  -moz-column-count: 4;
+  -webkit-column-count: 4;
+  column-count: 4;
+  -moz-column-rule: 1px solid red;
+  -webkit-column-rule: 1px solid red;
+  column-rule: 1px solid red;
+  width: 300px;
+  margin-bottom: 20px;
+}

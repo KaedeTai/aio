@@ -1,0 +1,16 @@
+input[type="text"]:-moz-placeholder {
+  color: #bfbfbf;
+  font-style: italic;
+}
+input[type="text"]::-moz-placeholder {
+  color: #bfbfbf;
+  font-style: italic;
+}
+input[type="text"]:-ms-input-placeholder {
+  color: #bfbfbf;
+  font-style: italic;
+}
+input[type="text"]::-webkit-input-placeholder {
+  color: #bfbfbf;
+  font-style: italic;
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>This is an example</title>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+</head>
+<body>
+<div id="vue">
+	<table border="1">
+		<tr>
+			<th>ID</th>
+			<th>Car</th>
+			<th>Brand</th>
+		</tr>
+		<tr v-for="car in cars">
+			<td v-text="car.id"></td>
+			<td v-text="car.name"></td>
+			<td v-text="car.brand"></td>
+		</tr>
+	</table>
+</div>
+<script>
+
+var data = {
+	cars: [
+		{id: 1, name: 'a', brand: 'b'},
+		{id: 2, name: 'A', brand: 'B'},
+	],
+};
+
+//data//
+
+var vue = new Vue({el: '#vue', data: data});
+
+</script>
+</body>
+</html>

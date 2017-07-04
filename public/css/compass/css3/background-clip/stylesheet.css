@@ -1,0 +1,24 @@
+.example {
+  padding: 2em;
+}
+.example div {
+  background-color: blue;
+  border: 10px solid rgba(255, 0, 0, 0.5);
+  color: white;
+  text-shadow: black 2px 2px;
+  padding: 3px;
+  text-align: center;
+  margin-bottom: 2em;
+}
+.example #padding-box {
+  -moz-background-clip: padding;
+  -o-background-clip: padding-box;
+  -webkit-background-clip: padding;
+  background-clip: padding-box;
+}
+.example #border-box {
+  -moz-background-clip: border;
+  -o-background-clip: border-box;
+  -webkit-background-clip: border;
+  background-clip: border-box;
+}

@@ -1,39 +1,283 @@
 <!DOCTYPE html>
 <html lang="zh-tw">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>This is an example</title>
-<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta name="description" content="">
+
+	<!--og info-->
+	<meta property="og:title" content="青鳥線上"/>
+	<meta property="og:url" content=""/>
+	<meta property="og:image" content=""/>
+	<meta property="og:site_name" content="青鳥線上"/>
+	<meta property="og:description" content="青鳥線上">
+
+	<title>青鳥線上</title>
+ 
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	
+	<!--css-->
+	<link href="css/bootstrap.css" rel="stylesheet">
+	<link href="css/global.css" rel="stylesheet">
+	<link href="css/index.css" rel="stylesheet">
+	<link href="fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="css/slick-theme.css" rel="stylesheet">
+	<link href="css/slick.css" rel="stylesheet">
+	<script src="js/vue.js"></script>
+	<script src="js/axios.js"></script>
+	<script src="js/api.js"></script>
+	<!--google-->
+<!--
+	<meta name="google-site-verification" content="-MLXb98KIXlOE_dmJ18CK9Ynil6NnPMRct9vU1ZYDpg" />
+	<link href="https://fonts.googleapis.com/css?family=Lora|Roboto:100,700,500" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Spectral:100, 400,700" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.ui.min.js"></script>
+	<script src="https://use.typekit.net/oem8boq.js"></script>
+	<script>try{Typekit.load({ async: true });}catch(e){}</script>
+	<!--[if lt IE 9]>
+		<script type="text/javascript" src="js/html5shiv.min.js"></script>
+		<script type="text/javascript" src="js/respond.min.js"></script>
+	<![endif]-->
+	<!--GA-->
+	<div id="fb-root"></div>
+	
 </head>
-<body>
+<body id="index">
 <div id="vue">
-	<table border="1">
-		<tr>
-			<th>ID</th>
-			<th>Car</th>
-			<th>Brand</th>
-		</tr>
-		<tr v-for="car in cars">
-			<td v-text="car.id"></td>
-			<td v-text="car.name"></td>
-			<td v-text="car.brand"></td>
-		</tr>
-	</table>
+
+	<!-- Navigation -->
+	<div id="navigation" class="container-fluid">
+		<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+			<div class="navbar-header">
+				<h2 class="logo"><a href="#top"><img src="images/BleuBook_logo.png" alt="青鳥書店 Bleu Book" title="青鳥書店 Bleu Book"></a></h2>
+				<div class="header__menu">
+					<a id="header__button" class="hamburger" href="#" data-toggle="collapse" data-target="#main-nav">
+						<div class="hamburger__inner"></div>
+					</a>  
+				</div>
+			</div>
+			<div class="collapse navbar-collapse" id="main-nav">
+				<ul class="nav navbar-nav">
+					<li><a href="index.html">活動</a></li>
+					<li><a href="books.html">選書</a></li>
+					<li id="list-icon"><a href="list.html">訂書單<div id="list-icon-count" class="inline">
+		<div id="cart-icon-count-num" v-text="list.length"></div>
+	</div></a></li>
+					<li id="cart-icon"><a href="cart.html">購物車<div id="cart-icon-count" class="inline">
+		<div id="cart-icon-count-num" v-text="cart.length"></div>
+	</div></a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+	<!-- /.Navigation -->
+	
+	<div class="wrapper">
+	    <div class="content-wraper">   
+            <!--section1 Hero banner-->
+            <div id="section1" class="section container-fluid">
+                <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#myCarousel" v-for="(s, i) in event.slides" :data-slide-to="i" :class="{active: i == 0}"></li>
+                    </ol>    
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner">
+                        <div class="item" v-for="(s, i) in event.slides" :class="{active: i == 0}">
+                            <img :src="s" alt="">
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                        <div class="arrow"><span class="arrow-left"></span></div>
+                    </a>
+                    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                        <div class="arrow" style="float: right;"><i class="arrow-right"></i></div>
+                    </a>
+                </div>
+                <div class="event-pagination clearfix">
+                    <div class="prev" v-if="prev">
+                        <a @click="index = (index + events.length - 1) % events.length">
+                            <span class="goto-left"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></span>
+                            <span class="title" v-text="prev"></span>
+                            <span class="title-sub">上一則</span>
+                        </a>
+                    </div>
+                    <div class="now">
+                        <h2 v-text="event.name"></h2>
+                        <h3 v-text="event.intro? '— ' + event.intro: ''"></h3>
+                    </div>
+                    <div class="next" v-if="next">
+                        <a @click="index = (index + 1) % events.length">
+                            <span class="title" v-text="next"></span>
+                            <span class="title-sub">下一則</span>
+                            <span class="goto-right"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!--section2 與談人-->
+            <div id="section2" class="section container-fluid row-centered">
+                <h2>與談人</h2>
+                <div class="col-xs-3" v-for="_id in event.speakers">
+                    <img :src="author[_id].image" :alt="author[_id].name + author[_id].title" class="img-responsive">
+                    <h4 v-text="author[_id].name"></h4>
+                    <h5 v-text="author[_id].title"></h5>
+                </div>
+            </div>
+            <!--section3 精采摘錄-->
+            <div id="section3" class="section container-fluid">
+                <h2>精采摘錄</h2>
+                <div class="row quote-block">
+                    <div class="col-sm-4" v-for="q in event.quotes">
+                        <a href="#" target="_blank"><blockquote>
+                            <p class="quote" v-text="q.quote"></p>
+                            <p class="speaker"><span v-text="author[q.author_id].name"></span><span v-text="author[q.author_id].title"></span></p>
+                            </blockquote></a>
+                    </div>
+                </div>
+            </div>
+            <!--section4 推薦選書-->
+            <div id="section4" class="section container-fluid">
+                <h2>推薦選書</h2>
+                <div class="content">
+                    <div class="slider">
+                        <div v-for="(_id, i) in event.books">
+                            <a @click="bindex = i" data-toggle="modal" data-target="#book-single">
+                                <div class="book-cover" :style="'background-image: url(' + book[_id].image + ')'"></div>
+                                <h4 v-text="book[_id].name"></h4>
+                                <h5 v-text="'作者： ' + author[book[_id].author_id].name"></h5>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="a-btn-lg">
+                    <a href="event.html">進入活動</a>
+                </div>
+            </div>
+	    </div>
+	</div>
+	<!--footer-->
+	<div class="footer container-fluid">
+		<div class="footer-content">
+			<ul>
+				<li><span><img src="images/BleuBook_logo_s.png" alt=""></span>© bleu & book 青鳥書店</li>
+				<li><a href=""><img src="images/icon_fb.png" alt=""></a></li>
+			</ul>
+			<p><a href="#">使用條款與隱私聲明</a></p>
+		</div>
+    </div>
+    
+    
+    <div class="modal fade" id="book-single" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<button type="button" class="close hairline" data-dismiss="modal"></button>
+				<div class="modal-body" v-if="event.books && event.books.length">
+					<div class="container">
+						<div class="row">
+							<div class="col-sm-4 col-sm-offset-2 book-cover">
+								<img :src="show.image" :alt="show.name + '作者：' + author[show.author_id].name" class="img-responsive">
+							</div>
+							<div class="col-sm-4">
+								<div class="book-detail">
+									<ul>
+									    <li v-text="show.name"></li>
+										<li v-text="'作者：' + author[show.author_id].name"></li>
+										<li v-if="show.translate" v-text="'譯者：' + show.translate"></li>
+										<li v-if="show.publisher" v-text="'出版社：' + show.publisher"></li></li>
+										<li>建議售價：<span class="del" v-text="show.price + '元'"></span></li>
+										<li>定價：<span class="discount" v-text="show.off"></span> 折 <span class="price" v-text="show.discount"></span>元</li>
+									</ul>
+									<div class="quantity-container">
+										<div class="quantity-title inline">數量:</div>
+										<div @click="quantity>1 ? quantity-- : 1" class="quantity-minus inline"><i class="fa fa-minus-circle"></i></div>
+										<div class="quantity-input inline"><div v-text="quantity" class="quantity-input-text inline"></div></div>
+										<div @click="quantity++" class="quantity-plus inline"><i class="fa fa-plus-circle"></i></div>
+										<div @click="addCart" class="quantity-add-cart">加入購物車</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row" v-for="c in show.comments">
+							<div class="col-sm-8 col-sm-offset-2">
+								<div class="recommand-block">
+									<div class="row">
+										<div class="recommended col-sm-2 col-xs-3"><img :src="author[c.author_id].image" :alt="author[c.author_id].name + '' + author[c.author_id].title" class="img-responsive"></div>
+										<div class="recommended-content col-sm-10 col-xs-9">
+											<p class="name" v-text="author[c.author_id].name"> <span class="title" v-text="author[c.author_id].title"></span><span class="icon_recommand"><img src="images/icon_recommand.png" alt=""></span></p>
+											<p class="recommand" v-html="c.comment"></p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
 </div>
 <script>
 
 var data = {
-  cars: [
-    {id: 1, name: 'a', brand: 'b'},
-    {id: 2, name: 'A', brand: 'B'},
-  ],
+	index: 0,
+	bindex: 0,
+	quantity: 1,
+	cart: get('cart', []),
+	list: get('list', []),
+	events: [{"_id":1,"slides":["images/slide_image1.jpg","images/event_2.jpg","images/event_1.jpg"],"speakers":[1,2,3,4],"quotes":[{"author_id":3,"quote":"用想像力的設計說好一個故事。"},{"author_id":4,"quote":"時代潮流看設計的台灣。"},{"author_id":2,"quote":"設計師必須是不滿現實的哲學家。"}],"books":[1,2,3,4],"name":"「青鳥獨立系列」美意識","intro":"台灣的設計思考談未來閱讀","date":"6/28"},{"_id":3,"slides":["images/event_1.jpg","images/slide_image1.jpg","images/event_2.jpg"],"speakers":[4,3,2,1],"quotes":[{"author_id":4,"quote":"時代潮流看設計的台灣。"},{"author_id":2,"quote":"設計師必須是不滿現實的哲學家。"},{"author_id":3,"quote":"用想像力的設計說好一個故事。"}],"books":[4,3,2,1],"name":"色之力","intro":"「美好生活的色彩提案」","date":"6/30"},{"_id":2,"slides":["images/event_2.jpg","images/event_1.jpg","images/slide_image1.jpg"],"speakers":[2,4,1,3],"quotes":[{"author_id":2,"quote":"設計師必須是不滿現實的哲學家。"},{"author_id":3,"quote":"用想像力的設計說好一個故事。"},{"author_id":4,"quote":"時代潮流看設計的台灣。"}],"books":[2,4,1,3],"name":"《100種東京》新書分享暨聊天會","intro":"","date":"6/27"}],
+	book: {"1":{"_id":1,"name":"欲望的教育：美意識創造未來","author_id":5,"image":"images/book_1.jpg","translate":"李柏黎","publisher":"雄獅美術","price":420,"discount":378,"off":9,"comment_id":2,"comment":"如此的簡潔並非是理性探求之下所得到的成果，也不是偶然的產物。而是將「什麼都沒有」這件事給有意圖地設定為目的。藉著空無一物之器皿的建立，「空（emptiness）」的概念就得以體現，進而吸引人群注意並產生向心力，此概念便能被有效運用。","comments":[{"author_id":2,"comment":"如此的簡潔並非是理性探求之下所得到的成果，也不是偶然的產物。而是將「什麼都沒有」這件事給有意圖地設定為目的。藉著空無一物之器皿的建立，「空（emptiness）」的概念就得以體現，進而吸引人群注意並產生向心力，此概念便能被有效運用。"}]},"2":{"_id":2,"name":"給未來的創新經營者：從蔦屋書店到佐藤可士和的六堂設計管理課","author_id":6,"image":"images/book_2.jpg","price":1000,"discount":900,"off":9,"comments":[{"author_id":1,"comment":"這是測試如此的簡潔並非是理性探求之下所得到的成果，也不是偶然的產物。而是將「什麼都沒有」這件事給有意圖地設定為目的。藉著空無一物之器皿的建立，「空（emptiness）」的概念就得以體現，進而吸引人群注意並產生向心力，此概念便能被有效運用。"}]},"3":{"_id":3,"name":"書設計：入行必備的權威聖經，編輯、設計、印刷全事典","author_id":7,"image":"images/book_3.jpg","price":500,"discount":450,"off":9,"comments":[{"author_id":3,"comment":"這還是測試如此的簡潔並非是理性探求之下所得到的成果，也不是偶然的產物。而是將「什麼都沒有」這件事給有意圖地設定為目的。藉著空無一物之器皿的建立，「空（emptiness）」的概念就得以體現，進而吸引人群注意並產生向心力，此概念便能被有效運用。"}]},"4":{"_id":4,"name":"為社會而設計","author_id":8,"image":"images/book_4.jpg","price":400,"discount":360,"off":9,"comments":[{"author_id":4,"comment":"都是測試如此的簡潔並非是理性探求之下所得到的成果，也不是偶然的產物。而是將「什麼都沒有」這件事給有意圖地設定為目的。藉著空無一物之器皿的建立，「空（emptiness）」的概念就得以體現，進而吸引人群注意並產生向心力，此概念便能被有效運用。"}]}},
+	author: {"1":{"_id":1,"name":"張鐵志","title":"文化評論家","image":"images/participant_1.jpg"},"2":{"_id":2,"name":"杜祖業123","title":"GQ 雜誌總編輯","image":"images/participant_2.jpg"},"3":{"_id":3,"name":"方序中","title":"究方社創辦人","image":"images/participant_3.jpg"},"4":{"_id":4,"name":"梁浩軒","title":"NCEPTION 啟藝創辦人","image":"images/participant_4.jpg"},"5":{"_id":5,"name":"原研哉"},"6":{"_id":6,"name":"川島蓉子"},"7":{"_id":7,"name":"安德魯．哈斯蘭"},"8":{"_id":8,"name":"奈傑爾・懷特里 Nigel Whiteley"}},
 };
 
 //data//
 
-var vue = new Vue({el: '#vue', data: data});
+var vue = new Vue({
+    el: '#vue',
+    data: data,
+    computed: {
+        prev: function () {
+			var l = this.events.length;
+			if (l < 2 || l == 2 && this.index == 0) return;
+			var e = this.events[(this.index + l - 1) % l];
+			return e.date + '' + e.name + (e.intro? ' - ' + e.intro: '');
+        },
+        next: function () {
+			var l = this.events.length;
+			if (l < 2 || l == 2 && this.index == 1) return;
+			var e = this.events[(this.index + 1) % l];
+			return e.date + '' + e.name + (e.intro? ' - ' + e.intro: '');
+        },
+        event: function () {
+			return this.events[this.index];
+        },
+        show: function () {
+			return this.book[this.event.books[this.bindex]];
+        },
+	},
+    methods: {
+		addCart: function () {
+			this.cart.push({_id: this.show._id, quantity: this.quantity});
+			set('cart', this.cart);
+			alert('已加入購物車');
+		},
+    },
+});
 
 </script>
+
+	<!--jQuery--> 
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js" ></script>
+	<script type="text/javascript" src="js/slick.min.js" ></script>
+	<!--script type="text/javascript" src="js/jquery.mobile.custom.min.js"></script-->
+	<script type="text/javascript" src="js/script.js" ></script>
+	
+
 </body>
 </html>

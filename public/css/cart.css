@@ -1,0 +1,137 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto+Condensed:700");
+/* ------------ base ------------ */
+.list {
+  display: table;
+  width: 80%;
+  margin: 0 auto;
+  border-bottom: 1px solid #ddd;
+  padding: 20px;
+}
+.list .book-cover {
+  text-align: center;
+  width: 100px;
+}
+.list .book-cover img {
+  width: 100%;
+}
+.list .book-cover, .list .detail {
+  display: table-cell;
+  vertical-align: middle;
+}
+.list .book-title {
+  width: 50%;
+  display: inline-block;
+  padding-left: 10px;
+}
+.list .amount {
+  width: 50%;
+  display: inline;
+}
+.list .qty, .list .book-price, .list .delete, .list .price_del {
+  display: inline-block;
+  vertical-align: top;
+}
+.list #quantity-plus, .list #quantity-minus {
+  color: #666;
+  font-size: 15px;
+}
+.list #quantity-input {
+  border: 1px solid #666;
+}
+.list #quantity-input-text {
+  color: #666;
+}
+.list .qty {
+  width: 140px;
+}
+.list .book-price {
+  width: 60px;
+  line-height: 36px;
+  text-align: right;
+  white-space: nowrap;
+}
+.list .price_del {
+  float: right;
+}
+.list .delete {
+  width: 50px;
+}
+.list .delete a {
+  display: block;
+  width: 36px;
+  height: 36px;
+  text-align: center;
+  line-height: 36px;
+  color: #45423D;
+  margin-left: 10px;
+}
+.list .delete a i {
+  font-size: 20px;
+}
+.list .delete a:hover {
+  color: #45423D;
+}
+.list .total {
+  text-align: right;
+  padding-right: 50px;
+  width: 100%;
+}
+@media screen and (max-width: 920px) {
+  .list {
+    width: 100%;
+  }
+}
+@media only screen and (max-width: 767px) {
+  .list {
+    display: flex;
+    height: auto;
+    width: 100%;
+  }
+  .list .book-title {
+    padding-bottom: 30px;
+    padding-left: 5px;
+  }
+  .list .book-cover {
+    text-align: right;
+  }
+  .list .book-cover, .list .detail {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .list .book-title, .list .amount {
+    display: block;
+    width: 100%;
+  }
+  .list .book-cover {
+    width: 100px;
+  }
+  .list .detail {
+    -webkit-flex: initial;
+    -webkit-flex: 1;
+  }
+  .list .amount {
+    width: 100%;
+  }
+  .list .delete {
+    float: right;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .list .book-cover {
+    width: 60px;
+  }
+  .list .total {
+    padding-right: 14px;
+  }
+  .list #quantity-plus, .list #quantity-minus {
+    margin: 0 4px;
+  }
+  .list .qty {
+    width: auto;
+  }
+}
+@media only screen and (max-width: 320px) {
+  .list .delete {
+    display: block;
+  }
+}

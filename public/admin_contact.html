@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<link href="css/bootstrap.css" rel="stylesheet">
+	<link href="css/element-ui.css" rel="stylesheet">
+	<link href="css/semantic.css" rel="stylesheet">
+	<link href="css/admin.css" rel="stylesheet">
+	<script src="js/vue.js"></script>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/axios.js"></script>
+	<script src="js/semantic.js"></script>
+	<script src="js/element-ui.js"></script>
+</head>
+<body>
+<div id="vue">
+
+<table border="1" @click="click">
+  <thead><tr><th>姓名</th><th>身份</th><th>電話</th><th style="width: 30px"><i class="el-icon-delete"></i></th></tr></thead>
+  <tbody>
+		<tr v-for="(x, i) in contact.list" :title="i">
+			<td class="edit" v-text="x.name" title="name"></td>
+			<td class="edit" v-text="x.title" title="title"></td>
+			<td class="edit" v-text="x.phone" title="phone"></td>
+			<td style="padding: 1px; text-align: center"><button @click="contact.list.splice(i, 1)">X</button></td>
+		</tr>
+	</tbody>
+  <tfoot>
+    <tr>
+			<th colspan="4">
+				<el-button @click="contact.list.push({name: '', title: '', phone: ''})" icon="plus">新增</el-button>
+				<el-button @click="save" icon="upload">儲存</el-button>
+    	</th>
+  	</tr>
+	</tfoot>
+</table>
+
+</div>
+
+<script>
+
+var data = {
+	idx: 0,
+	key: '',
+	page: 0,
+	contact: {
+		id: 0,
+		list: [
+			{name: '小養羊', title: '養羊長', phone: '0910094490'},
+		],
+	}
+};
+
+//data//
+
+var vue = new Vue({el: '#vue', data: data, methods: {
+	blur: function (e) {
+		console.log('BLUR', e);
+		vue.contact.list[vue.idx].edit = null;
+	},
+	click: function (e) {
+		console.log('CLICK', e);
+		if (e.target.className != 'edit') return;
+		vue.idx = parseInt(e.target.parentElement.title);
+		vue.key = e.target.title;
+		var td = e.target;
+		var value = td.innerText;
+		td.style.padding = '0';
+		td.innerHTML = '<input id="edit">';
+		var input = document.getElementById('edit');
+		input.value = value;
+		input.onblur = function (e) {
+			console.log('BLUR', e);
+			value = input.value;
+			td.innerText = input.value;
+			td.style.padding = '6px';
+			vue.contact.list[vue.idx][vue.key] = input.value;
+		};
+		input.focus();
+		console.log(vue.idx, vue.key);
+	},
+	save: function () {
+		axios.post('admin_contact_save', vue.contact).then(function (result) {
+			if (result.data.code == 0)
+				alert('儲存成功！');
+			else
+				alert(result.data.message);
+		}).catch(function (error) {
+			alert(error);
+		});
+	},
+}});
+
+</script>
+
+</body>
+</html>

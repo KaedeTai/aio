@@ -1,0 +1,82 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto+Condensed:700");
+/* ------------ base ------------ */
+.book-cover-list .col-xs-3 {
+  margin-bottom: 18px;
+}
+.book-cover-list .col-xs-3 a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.book-cover-list .col-xs-3 h4 {
+  font-size: 16px;
+  line-height: 1.4;
+  color: #45423D;
+}
+.book-cover-list .col-xs-3 h5 {
+  line-height: 1.4;
+  color: #45423D;
+}
+.book-cover-list .book-cover {
+  width: 100%;
+  min-height: 250px;
+  background: no-repeat;
+  background-size: contain;
+  background-position: center bottom;
+}
+@media only screen and (min-width: 1200px) {
+  .book-cover-list .book-cover {
+    min-height: 264px;
+  }
+}
+@media only screen and (min-width: 1300px) {
+  .book-cover-list .book-cover {
+    min-height: 280px;
+  }
+}
+@media only screen and (min-width: 992px) and (max-width: 1200px) {
+  .book-cover-list .book-cover {
+    min-height: 200px;
+  }
+}
+@media only screen and (min-width: 769px) and (max-width: 991px) {
+  .book-cover-list .book-cover {
+    min-height: 170px;
+  }
+}
+@media only screen and (min-width: 769px) and (max-width: 890px) {
+  .book-cover-list .book-cover {
+    min-height: 150px;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .book-cover-list .book-cover {
+    min-height: 140px;
+  }
+}
+@media only screen and (min-width: 641px) and (max-width: 767px) {
+  .book-cover-list .book-cover {
+    min-height: 200px;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .book-cover-list .book-cover {
+    min-height: 120px;
+  }
+}
+@media only screen and (min-width: 375px) and (max-width: 413px) {
+  .book-cover-list .book-cover {
+    min-height: 110px;
+  }
+}
+@media only screen and (min-width: 321px) and (max-width: 374px) {
+  .book-cover-list .book-cover {
+    min-height: 90px;
+  }
+}
+@media only screen and (max-width: 320px) {
+  .book-cover-list .book-cover {
+    min-height: 90px;
+  }
+}

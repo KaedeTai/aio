@@ -42,8 +42,29 @@ api.get('/delete', {id: 'int'}, (req, res) => {
   res.ok(Car.delete(req.query.id));
 });
 
+var Chrome = require('../utils/Chrome');
+
+api.get('/init', {}, (req, res) => {
+  Chrome('http://trader.tozzi.com.tw/trader/5');
+  res.ok();
+});
+
+api.get('/a', {}, (req, res) => {
+  var total = Chrome.eval("$('.slick-slide a').length").result.value;
+  var a = [];
+  for (var i = 0; i < total; i ++) {
+    a.push(Chrome.eval("$('.slick-slide a')[" + i + "].href").result.value);
+  }
+  Chrome.eval("$('.slick-slide a')[0].click()")
+  res.ok(a);
+});
+
 api.get('/', {}, (req, res) => {
-  res.render({cars: Car.getAllInfo()}, 'public/index.html');
+  res.render({cars: Car.getAllInfo()}, 'public/car.html');
+});
+
+api.post('/', {}, (req, res) => {
+  res.ok(req.body);
 });
 
 api.help('/help');

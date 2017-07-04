@@ -1,0 +1,125 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto+Condensed:700");
+/* ------------ base ------------ */
+.event-pagination h2, .event-pagination h3, .event-info h2, .event-info h3 {
+  margin-bottom: 6px !important;
+}
+.event-pagination h2, .event-info h2 {
+  font-size: 18px;
+  color: #45423D;
+  font-weight: normal;
+}
+.event-pagination h3, .event-info h3 {
+  font-size: 15px;
+  color: #666;
+  font-weight: lighter;
+}
+
+.quote-block a {
+  height: 100%;
+}
+
+.event-pagination {
+  padding: 20px 0;
+  clear: left;
+  display: flex;
+}
+.event-pagination .now {
+  -webkit-flex: initial;
+  -webkit-flex: 1;
+  flex: 1;
+  padding: 4px;
+  text-align: center;
+}
+.event-pagination .next, .event-pagination .prev {
+  width: 240px;
+  height: 60px;
+  padding: 10px;
+  border: 1px solid #AF946F;
+  -webkit-flex: none;
+  flex: none;
+  position: relative;
+}
+.event-pagination .next a .goto-left, .event-pagination .next a .goto-right, .event-pagination .prev a .goto-left, .event-pagination .prev a .goto-right {
+  position: absolute;
+  padding: 0 6px;
+  top: 7px;
+}
+.event-pagination .next a .goto-left, .event-pagination .prev a .goto-left {
+  left: 0;
+}
+.event-pagination .next a .goto-right, .event-pagination .prev a .goto-right {
+  right: 0;
+}
+.event-pagination .next a .title, .event-pagination .prev a .title {
+  height: 40px;
+  overflow: hidden;
+  display: block;
+}
+.event-pagination .next a:hover, .event-pagination .prev a:hover {
+  color: #AF946F;
+}
+.event-pagination .next:hover, .event-pagination .prev:hover {
+  background: #FAF8F5;
+}
+.event-pagination .next {
+  float: right;
+  padding-right: 24px;
+  text-align: right;
+}
+.event-pagination .prev {
+  padding-left: 24px;
+}
+@media screen and (min-width: 768px) {
+  .event-pagination .title-sub {
+    display: none;
+  }
+  .event-pagination .next, .event-pagination .prev {
+    width: 150px;
+  }
+}
+@media screen and (min-width: 992px) {
+  .event-pagination .next, .event-pagination .prev {
+    width: 220px;
+  }
+}
+@media screen and (max-width: 767px) {
+  .event-pagination .next, .event-pagination .prev {
+    width: 80px;
+    height: 26px;
+    padding-top: 4px;
+    font-size: 12px;
+  }
+  .event-pagination .next a .goto-left, .event-pagination .next a .goto-right, .event-pagination .prev a .goto-left, .event-pagination .prev a .goto-right {
+    top: 4px;
+  }
+  .event-pagination .next a .title, .event-pagination .prev a .title {
+    display: none;
+  }
+  .event-pagination .next a .title-sub, .event-pagination .prev a .title-sub {
+    display: block;
+  }
+}
+@media only screen and (max-width: 320px) {
+  .event-pagination .next, .event-pagination .prev {
+    width: 26px;
+    padding: 0;
+  }
+  .event-pagination .next a .title-sub, .event-pagination .prev a .title-sub {
+    display: none;
+  }
+}
+
+#section1 {
+  padding-top: 0;
+  padding-bottom: 0;
+  border-bottom: 1px solid #AF946F;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#section2, #section3, #section4 {
+  text-align: center;
+}
+#section2 h4, #section3 h4, #section4 h4 {
+  line-height: 1.6;
+}

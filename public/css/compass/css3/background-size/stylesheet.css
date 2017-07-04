@@ -1,0 +1,44 @@
+.example {
+  padding: 2em;
+}
+.example div {
+  background-image: url('../../../../images/examples/css3/bg-origin/bg.png');
+  background-repeat: no-repeat;
+  background-position: top left;
+  border: 10px solid rgba(255, 0, 0, 0.5);
+  color: black;
+  text-shadow: white 1px 1px 4px;
+  padding: 1em;
+  text-align: center;
+  margin-bottom: 2em;
+}
+.example #auto {
+  -moz-background-size: auto;
+  -o-background-size: auto;
+  -webkit-background-size: auto;
+  background-size: auto;
+}
+.example #contain {
+  -moz-background-size: contain;
+  -o-background-size: contain;
+  -webkit-background-size: contain;
+  background-size: contain;
+}
+.example #cover {
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  -webkit-background-size: cover;
+  background-size: cover;
+}
+.example #percent {
+  -moz-background-size: 50% 50%;
+  -o-background-size: 50% 50%;
+  -webkit-background-size: 50% 50%;
+  background-size: 50% 50%;
+}
+.example #absolute {
+  -moz-background-size: 100px 25px;
+  -o-background-size: 100px 25px;
+  -webkit-background-size: 100px 25px;
+  background-size: 100px 25px;
+}

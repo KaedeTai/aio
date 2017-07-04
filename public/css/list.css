@@ -1,0 +1,66 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto+Condensed:700");
+/* ------------ base ------------ */
+@media only screen and (max-width: 767px) {
+  #section2 {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+.order-list {
+  line-height: 40px;
+}
+.order-list .col-sm-3 {
+  text-align: right;
+}
+.order-list .col-sm-3 a {
+  text-decoration: underline;
+}
+@media only screen and (max-width: 767px) {
+  .order-list {
+    line-height: 30px;
+  }
+  .order-list .col-sm-3 {
+    text-align: left;
+  }
+}
+
+.order-result {
+  text-align: center;
+}
+.order-result h4 {
+  font-size: 16px;
+}
+
+.tab-container {
+  margin: 10px auto;
+  padding: 4px 10px;
+}
+
+.table th:first-of-type, .table td:first-of-type {
+  text-align: left;
+}
+.table th:nth-last-of-type(1), .table th:nth-last-of-type(3), .table td:nth-last-of-type(1), .table td:nth-last-of-type(3) {
+  text-align: right;
+}
+@media only screen and (max-width: 767px) {
+  .table th, .table td {
+    width: 15%;
+  }
+  .table th:first-of-type, .table td:first-of-type {
+    width: 50%;
+  }
+}
+
+.a-btn-lg.full {
+  margin: 4px 0 30px;
+}
+
+.order-list-single {
+  border-bottom: 1px solid #AF946F;
+  padding-bottom: 30px;
+  margin-bottom: 40px;
+}
+.order-list-single:nth-last-of-type(1) {
+  border-bottom: none;
+}
