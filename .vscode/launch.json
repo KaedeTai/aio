@@ -8,13 +8,13 @@
             "type": "node",
             "request": "launch",
             "name": "啟動程式",
-            "program": "${workspaceRoot}/www"
+            "program": "${workspaceRoot}/www",
+            "cwd": "${workspaceRoot}"
         },
         {
             "type": "node",
             "request": "attach",
-            "name": "連結至連接埠",
-            "address": "localhost",
+            "name": "附加至處理序",
             "port": 5858
         }
     ]
