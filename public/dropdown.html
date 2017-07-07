@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<link href="css/global.css" rel="stylesheet">
+	<link href="css/element-ui.css" rel="stylesheet">
+	<link href="css/semantic.css" rel="stylesheet">
+	<link href="css/admin.css" rel="stylesheet">
+	<script src="js/vue.js"></script>
+	<script src="js/element-ui.js"></script>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/semantic.js"></script>
+	<script src="js/axios.js"></script>
+	<script src="js/api.js"></script>
+</head>
+<body class="season2">
+<div id="vue">
+
+	<select v-model="value" class="ui search dropdown">
+		<option value="">請選擇</option>
+		<option v-for="d in datalist" :value="d.id" v-text="d.label"></option>
+	</select>
+
+</div>
+
+<script>
+
+var datalist = [];
+for (var i = 0; i < 10000; i ++)
+	datalist.push({id: i, label: 'abc' + i + 'thisisatest' + i});
+
+var data = {
+	value: '123',
+	datalist: datalist
+};
+
+//data//
+
+var vue = new Vue({
+	el: '#vue',
+	data: data,
+});
+
+$('.ui.dropdown').dropdown({
+	fireOnInit: true,
+	onChange: function(value) {
+		var target = $(this);
+		var wrapper = target.prop('tagName') == 'SELECT' ? target.parent() : target;
+		if (value) {
+			var icon = wrapper.find('.dropdown.icon');
+			icon.removeClass('dropdown').addClass('delete').on('click', function(e) {
+				target.dropdown('clear');
+				$(this).removeClass('delete').addClass('dropdown');
+				e.preventDefault();
+				return false;
+			});
+		}
+	}
+});
+
+</script>
+
+</body>
+</html>
