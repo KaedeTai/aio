@@ -10,6 +10,13 @@
 	<script src="js/element-ui.js"></script>
 	<script src="js/axios.js"></script>
 	<script src="js/api.js"></script>
+	<!-- include summernote css/js needed by kedit -->
+	<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script> 
+	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+	<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.6/summernote.css" rel="stylesheet">
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.6/summernote.js"></script>
+	<script src="js/kedit.js"></script>
 </head>
 <body class="season2">
 
@@ -78,8 +85,8 @@
 	<el-button @click="addEvent" icon="plus">新增</el-button>
 </el-tab-pane>
 
-<el-tab-pane label="訂位" name="order">
-	還在開發中
+<el-tab-pane label="網頁" name="html">
+	<kedit :value.sync="shop.html" placeholder="請編輯"></kedit>
 </el-tab-pane>
 
 </el-tabs>
@@ -107,6 +114,7 @@ var data = {
 		intro: '',
 		media: [],
 		event: [],
+		html: '',
 	},
 };
 
@@ -120,18 +128,6 @@ var vue = new Vue({el: '#vue', data: data, methods: {
 	progress: function (e) {
 		vue.percent = parseInt(e.percent * 10) / 10 + '%';
 	},
-/*
-	addMedia: function (e) {
-		var file = e.target.files[0];
-		var reader = new FileReader();
-		reader.onload = function (e) {
-			file.src = e.target.result;
-			vue.shop.media.push(file);
-		}
-		reader.readAsDataURL(e.target.files[0]);
-		e.target.value = '';
-	},
-*/
 	addMedia: function (result) {
 		vue.lock = false;
 		if (result.code != 0) return alert(result.message);
