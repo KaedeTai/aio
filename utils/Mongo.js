@@ -5,9 +5,13 @@ var config = require('../config');
 
 var db;
 
-var Mongo = (collection, find, fields, sort) => {
+var Mongo = (collection, find, fields, sort, limit, skip) => {
   if (!db) db = await(mongo.connectAsync(config.mongodb));
-  var cursor = await(db.collection(collection).find(find, fields).sort(sort));
+  var query = db.collection(collection).find(find, fields);
+  if (sort) query = query.sort(sort);
+  if (skip) query = query.skip(skip);
+  if (limit) query = query.limit(limit);
+  var cursor = await(query);
   var arr = [];
   promise.promisifyAll(cursor);
   while (item = await(cursor.nextAsync())) {
@@ -49,6 +53,30 @@ Mongo.remove = (collection, remove) => {
   if (!db) db = await(mongo.connectAsync(config.mongodb));
   var rs = await(db.collection(collection).removeOne(remove));
   return {removed: rs.deletedCount};
+}
+
+Mongo.listCollections = (collection) => {
+  if (!db) db = await(mongo.connectAsync(config.mongodb));
+  return await(db.listCollections({name: collection}).toArray());
+}
+
+Mongo.exists = (collection) => {
+  return Mongo.listCollections(collection).length;
+}
+
+Mongo.create = (collection) => {
+  if (!db) db = await(mongo.connectAsync(config.mongodb));
+  return await(db.createCollection(collection));
+}
+
+Mongo.truncate = (collection) => {
+  if (!db) db = await(mongo.connectAsync(config.mongodb));
+  return await(db.collection(collection).remove({})).result.n;
+}
+
+Mongo.count = (collection, find) => {
+  if (!db) db = await(mongo.connectAsync(config.mongodb));
+  return await(db.collection(collection).count(find));
 }
 
 // manage by auto increment _id
