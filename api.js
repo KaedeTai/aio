@@ -2,9 +2,13 @@ var async = require('asyncawait/async');
 var await = require('asyncawait/await');
 var config = require('./config');
 //var User = require('./models/User');
+var Mongo = require('./utils/Mongo');
 var Get = require('./utils/Get');
 var Post = require('./utils/Post');
 var File = require('./utils/File');
+
+Object.toArray = o => Object.keys(o).map(x => o[x]);
+Array.toDict = (arr, key = 'id') => {var o = {}; for (var i in arr) o[arr[i][key]] = arr[i]; return o;};
 
 var dump = i => {
   var o = {};
@@ -21,7 +25,7 @@ var dump = i => {
   return o;
 };
 
-var check = (key, value, rule) => {
+var check = (key, value, rule, query) => {
   if (Array.isArray(rule)) {
     if (rule.length > 0) {
       if (rule[0].substr) {
@@ -30,32 +34,40 @@ var check = (key, value, rule) => {
           throw [-4, "value '" + value + "' of parameter '" + key + "' is not in ['" + rule.join("', '") + "']"];
       } else if (rule.length == 1 && Array.isArray(rule[0])) {
         // array of enum
-        if (!Array.isArray(value)) 
+        if (!Array.isArray(value))
           throw [-5, "type of parameter '" + key + "' must be array"];
         for (var i in value)
           if (rule[0].indexOf(value[i]) == -1)
             throw [-6, "value '" + value[i] + "' of parameter '" + key + "[" + i + "]' is not in ['" + rule[0].join("', '") + "']"];
       } else if (rule.length == 2) {
         // range
+        value = parseInt(value);
         if (value < rule[0] || value > rule[1])
           throw [-3, "value " + value + " of parameter '" + key + "' is not in the range of (" + rule[0] + ", " + rule[1] + ")"];
+        query[key] = value;
       }
     } else {
       // array
-      if (!Array.isArray(value)) 
+      if (!Array.isArray(value))
         throw [-5, "type of parameter '" + key + "' must be array"];
     }
   } else if (rule.test) {
     // regex
     if (!rule.test(value))
       throw [-7, "value '" + value + "' of parameter '" + key + "' does not match pattern " + rule];
-  } else if (rule == 'int') {
+  } else if (rule == 'int' || rule === parseInt(rule)) {
     // int
-    if (!/-?[0-9]+/.test(value) || isNaN(parseInt(value)))
+    if (isNaN(parseInt(value)))
       throw [-8, "value '" + value + "' of parameter '" + key + "' is not an integer"];
+    query[key] = parseInt(value);
+  } else if (rule == 'float' || rule === parseFloat(rule)) {
+    // float
+    if (isNaN(parseFloat(value)))
+      throw [-8, "value '" + value + "' of parameter '" + key + "' is not an float"];
+    query[key] = parseFloat(value);
   } else if (rule === Object(rule)) {
     // object
-    if (value === Object(value))
+    if (value !== Object(value))
       throw [-9, "value '" + value + "' of parameter '" + key + "' is not an object"];
   } else if (rule == 'date') {
     // date
@@ -74,12 +86,47 @@ var callback = (rules, func) =>
         res.json(json);
     };
 
-    res.render = (data, file) => {
+    res.render = (data, file, cache) => {
       var values = [];
-      for (var key in data)
-        values.push('data.' + key + ' = ' + JSON.stringify(data[key]) + ';');
-      res.end(File(file).replace('//data//', values.join('\n')));
+      for (var key in data) {
+        var json = JSON.stringify(data[key]);
+        while (json.match(/<\/?script[^>]*>/i)) {
+          json = json.replace(/<\/?script[^>]*>/ig, '');
+        }
+        values.push('data.' + key + ' = ' + json + ';');
+      }
+      var html = File(file).replace('//data//', values.join('\n'));
+      html = html.replace('//facebook//', File('public/js/fb.js'));
+      if (req.user && req.user.en)
+        html = html.replace(/\/assets\/images\//g, '/assets/images/english/');
+      if (cache)
+        File.write(config.cache + '/' + cache, html);
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.end(html);
     }
+
+    res.facebook = (data, file, og, cache) => {
+      var values = [];
+      for (var key in data) {
+        var json = JSON.stringify(data[key]);
+        while (json.match(/<\/?script[^>]*>/i)) {
+          json = json.replace(/<\/?script[^>]*>/ig, '');
+        }
+        values.push('data.' + key + ' = ' + json + ';');
+      }
+      var html = File(file).replace('//data//', values.join('\n'));
+      html = html.replace('//facebook//', File('public/js/fb.js'));
+      //if (req.user && req.user.en) html = html.replace(/\/assets\/images\//g, '/assets/images/english/');
+      html = html.replace(/=og:title/, og.title);
+      html = html.replace(/=og:description/, og.description);
+      html = html.replace(/=og:url/, og.url);
+      html = html.replace(/=og:image/, og.image);
+      if (cache)
+        File.write(config.cache + '/' + cache, html);
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.end(html);
+    }
+
 
     res.ok = (data) =>
       res.rtn({code: 0, message: 'ok', data: data});
@@ -92,12 +139,25 @@ var callback = (rules, func) =>
 
       var query = (req.method == 'POST')? req.body: req.query;
       for (var key in rules) {
+        // login
+        if (key == '$') { // [type, level, other]
+          if (rules[key] == 1) {
+            if (!req.signedCookies.user_id) throw [-1, '請重新登入！'];
+            req.user = Mongo.get('user', parseInt(req.signedCookies.user_id));
+            req.user.en = !/zh-TW/i.test(req.headers['accept-language']);
+          }
+          else {
+            if (!req.signedCookies.admin) throw [-1, '請重新登入！'];
+          }
+          //req.user = {_id: 1, name: '戴志洋', image: {url: '/assets/images/default.jpg', imgCheck: 'N', imgMemo: ''}};
+          continue;
+        }
         // optional
         if (key == '_') {
           for (var _key in rules['_']) {
             if (_key in query) {
               var value = query[_key];
-              check(_key, value, rules['_'][_key]);
+              check(_key, value, rules['_'][_key], query);
               req.checked[_key] = value;
             }
           }
@@ -115,12 +175,12 @@ var callback = (rules, func) =>
           throw [-2, "missing parameter '" + key + "'"];
 
         if (rules[key] == 'user') {
-          // get user from id
-          req.user = {};//User(value);
+          // get user from token
+          req.user = User.token(value);
           if (!req.user) throw [-1, '請重新登入！'];
         }
         else {
-          check(key, value, rules[key]);
+          check(key, value, rules[key], query);
           req.checked[key] = value;
         }
       }
@@ -128,6 +188,7 @@ var callback = (rules, func) =>
       func(req, res, next);
     } catch(e) {
       console.log(e);
+      return res.err(-99, '系統忙碌中請稍候');
       if (Array.isArray(e))
         return res.err(e[0], e[1]);
       res.err(e.code? e.code: -99, e.message? e.message: 'unknown error', e);
@@ -177,11 +238,11 @@ var api = base => {
   api.test = (route) => {
     api._get(route, async((req, res) => {
       var Jobs = {};
-      var http = Get.json;
+      var http = Post.json;
       for (var path in unit)
         if (unit[path].length == 1)
           Jobs[base + path] = http(config.uri + base + path, unit[path][0]);
-        else 
+        else
           for (var i in unit[path])
             Jobs[base + path + ':' + i] = http(config.uri + base + path, unit[path][i]);
       res.json(await(Jobs));
