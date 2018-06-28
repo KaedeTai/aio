@@ -1,11 +1,8 @@
-var async = require('asyncawait/async');
-var await = require('asyncawait/await');
 var config = require('./config');
 //var User = require('./models/User');
 var Mongo = require('./utils/Mongo');
 var Get = require('./utils/Get');
 var Post = require('./utils/Post');
-var File = require('./utils/File');
 
 Object.toArray = o => Object.keys(o).map(x => o[x]);
 Array.toDict = (arr, key = 'id') => {var o = {}; for (var i in arr) o[arr[i][key]] = arr[i]; return o;};
@@ -78,7 +75,7 @@ var check = (key, value, rule, query) => {
 };
 
 var callback = (rules, func) =>
-  async((req, res, next) => {
+  async (req, res, next) => {
     res.rtn = (json) => {
       if (req.query.callback)
         res.jsonp(json);
@@ -95,12 +92,12 @@ var callback = (rules, func) =>
         }
         values.push('data.' + key + ' = ' + json + ';');
       }
-      var html = File(file).replace('//data//', values.join('\n'));
-      html = html.replace('//facebook//', File('public/js/fb.js'));
+      var html = FS(file).replace('//data//', values.join('\n'));
+      html = html.replace('//facebook//', FS('public/js/fb.js'));
       if (req.user && req.user.en)
         html = html.replace(/\/assets\/images\//g, '/assets/images/english/');
       if (cache)
-        File.write(config.cache + '/' + cache, html);
+        FS.write(config.cache + '/' + cache, html);
       res.setHeader("Content-Type", "text/html; charset=utf-8");
       res.end(html);
     }
@@ -114,15 +111,15 @@ var callback = (rules, func) =>
         }
         values.push('data.' + key + ' = ' + json + ';');
       }
-      var html = File(file).replace('//data//', values.join('\n'));
-      html = html.replace('//facebook//', File('public/js/fb.js'));
+      var html = FS(file).replace('//data//', values.join('\n'));
+      html = html.replace('//facebook//', FS('public/js/fb.js'));
       //if (req.user && req.user.en) html = html.replace(/\/assets\/images\//g, '/assets/images/english/');
       html = html.replace(/=og:title/, og.title);
       html = html.replace(/=og:description/, og.description);
       html = html.replace(/=og:url/, og.url);
       html = html.replace(/=og:image/, og.image);
       if (cache)
-        File.write(config.cache + '/' + cache, html);
+        FS.write(config.cache + '/' + cache, html);
       res.setHeader("Content-Type", "text/html; charset=utf-8");
       res.end(html);
     }
@@ -193,7 +190,7 @@ var callback = (rules, func) =>
         return res.err(e[0], e[1]);
       res.err(e.code? e.code: -99, e.message? e.message: 'unknown error', e);
     }
-  });
+  };
 
 var api = base => {
   api = require('express').Router();
@@ -236,7 +233,7 @@ var api = base => {
   };
 
   api.test = (route) => {
-    api._get(route, async((req, res) => {
+    api._get(route, async (req, res) => {
       var Jobs = {};
       var http = Post.json;
       for (var path in unit)
@@ -246,7 +243,7 @@ var api = base => {
           for (var i in unit[path])
             Jobs[base + path + ':' + i] = http(config.uri + base + path, unit[path][i]);
       res.json(await(Jobs));
-    }));
+    });
     return api;
   };
 

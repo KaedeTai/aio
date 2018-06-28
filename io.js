@@ -13,5 +13,11 @@ else
 var io = require('socket.io')(server);
 
 // Socket.io services here
+io.on('connection', socket => {
+  socket.on('hi', msg => {
+    console.log(msg);
+    io.emit('hi', msg);
+  })
+})
 
 module.exports = server;

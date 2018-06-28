@@ -4,8 +4,6 @@ oracledb.outFormat = oracledb.OBJECT;
 oracledb.autoCommit = true;
 oracledb.poolMax = 4;
 oracledb.maxRows = 10000;
-var await = require('asyncawait/await');
-var async = require('asyncawait/async');
 var credentials = {
   user: config.username,
   password: config.password,

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>This is an example</title>
+<script src="/socket.io/socket.io.js"></script>
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
 </head>
 <body>
@@ -22,6 +23,9 @@
 	</table>
 </div>
 <script>
+
+var io = io();
+io.emit('hi', 'hihi');
 
 var data = {
 	cars: [
