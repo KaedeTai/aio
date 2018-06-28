@@ -1,5 +1,4 @@
 var gcm = require('node-gcm');
-var await = require('asyncawait/await');
 var config = require('../config');
 var sender = require('bluebird').promisifyAll(new gcm.Sender(config.gcm_key));
 

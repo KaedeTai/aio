@@ -1,5 +1,4 @@
 var db = require('mysql-promise')();
-var await = require('asyncawait/await');
 var config = require('../config');
 
 db.configure({

@@ -6,7 +6,6 @@
     "start": "pm2 start www --watch --merge-logs"
   },
   "dependencies": {
-    "asyncawait": "~1.0.1",
     "bluebird": "~2.10.2",
     "body-parser": "~1.14.1",
     "chrome-remote-interface": "^0.19.1",

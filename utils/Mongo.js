@@ -1,6 +1,5 @@
 var promise = require('bluebird')
 var mongo = promise.promisifyAll(require('mongodb').MongoClient);
-var await = require('asyncawait/await');
 var config = require('../config');
 
 var db;
