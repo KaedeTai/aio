@@ -1,11 +1,31 @@
 var gcm = require('node-gcm');
 var config = require('../config');
-var sender = require('bluebird').promisifyAll(new gcm.Sender(config.gcm_key));
+var sender = new gcm.Sender(config.gcm_key);
 
-var GCM = (msg, to) =>
-  await(sender.sendAsync(new gcm.Message(msg), {to}));
+var GCM = async (to, title, body, icon = 'ic_launcher', data) => {
+  var msg = new gcm.Message({
+    priority: 'high',
+    notification: {
+      title,
+      icon,
+      body
+    },
+    data
+  });
+  return await sender.send(msg, {to});
+}
 
-GCM.all = (msg, tokens) =>
-  await(sender.sendAsync(new gcm.Message(msg), {registrationTokens: tokens}));
+GCM.all = async (tokens, title, body, icon = 'ic_launcher', data) => {
+  var msg = new gcm.Message({
+    priority: 'high',
+    notification: {
+      title,
+      icon,
+      body
+    },
+    data
+  });
+  return await sender.send(msg, {registrationTokens: tokens});
+}
 
 module.exports = GCM;

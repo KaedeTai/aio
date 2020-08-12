@@ -9,6 +9,12 @@
             "request": "launch",
             "name": "啟動程式",
             "program": "${workspaceRoot}/www",
+            "env": {
+				"NODE_ENV": "development",
+				"PORT": "8100",
+				"URI": "https://domain.name",
+				"COOKIE_HOST": "localhost",
+            },
             "cwd": "${workspaceRoot}"
         },
         {

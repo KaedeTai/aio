@@ -1,11 +1,37 @@
 var config = require('./config');
-//var User = require('./models/User');
+var FS = require('./utils/FS');
 var Mongo = require('./utils/Mongo');
 var Get = require('./utils/Get');
 var Post = require('./utils/Post');
 
 Object.toArray = o => Object.keys(o).map(x => o[x]);
 Array.toDict = (arr, key = 'id') => {var o = {}; for (var i in arr) o[arr[i][key]] = arr[i]; return o;};
+Object.defineProperty(global, '__stack', {
+  get: function() {
+    var orig = Error.prepareStackTrace;
+    Error.prepareStackTrace = function(_, stack) {
+      return stack;
+    };
+    var err = new Error;
+    Error.captureStackTrace(err, arguments.callee);
+    var stack = err.stack;
+    Error.prepareStackTrace = orig;
+    return stack;
+  }
+});
+Object.defineProperty(global, '__line', {
+  get: function() {
+    return __stack[1].getLineNumber();
+  }
+});
+Object.defineProperty(global, '__function', {
+  get: function() {
+    return __stack[1].getFunctionName();
+  }
+});
+global.__aio_err = (_function, _filename, _line) => {
+    return `    at ${_function} (${_filename}:${_line})`;
+};
 
 var dump = i => {
   var o = {};
@@ -76,24 +102,69 @@ var check = (key, value, rule, query) => {
 
 var callback = (rules, func) =>
   async (req, res, next) => {
-    res.rtn = (json) => {
-      if (req.query.callback)
-        res.jsonp(json);
-      else
-        res.json(json);
+    // write API log
+    var writeLog = log => {
+      // ignore local test
+      if (req.ip == '::1') return;
+
+      // send API log to logger asynchronously
+      Post.json(config.logger_url, Object.assign({
+        ip: req.ip,
+        host: req.hostname,
+        base: req.baseUrl,
+        url: req.originalUrl,
+        path: req.path,
+        method: req.method,
+        query: req.query,
+        body: req.body,
+        signedCookies: req.signedCookies,
+        //session: req.sessoin.toJSON(),
+        session: req.session || null,
+        headers: req.headers,
+        date: new Date(),
+      }, log)).catch(e => e);
     };
 
-    res.render = (data, file, cache) => {
+    res.rtn = (json) => {
+      if (req.query.callback) {
+        res.setHeader("Content-Type", "application/javascript; charset=utf-8");
+        res.jsonp(json);
+      } else {
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
+        res.json(json);
+      }
+    };
+
+    res.data = (data, file, cache) => {
+      writeLog({type: 'data', data, file});
+
       var values = [];
       for (var key in data) {
         var json = JSON.stringify(data[key]);
-        while (json.match(/<\/?script[^>]*>/i)) {
-          json = json.replace(/<\/?script[^>]*>/ig, '');
+        values.push('data.' + key + ' = ' + json + ';');
+      }
+      var html = FS(file).replace('//data//', values.join('\n'));
+      if (cache)
+        FS.write(config.cache + '/' + cache, html);
+      res.setHeader("Content-Type", "application/javascript; charset=utf-8");
+      res.end(html);
+    }
+
+    res.render = (data, file, cache) => {
+      writeLog({type: 'render', data, file});
+
+      var values = [];
+      for (var key in data) {
+        var json = JSON.stringify(data[key]);
+        if (data[key]) {
+          while (json.match(/<\/?script[^>]*>/i)) {
+            json = json.replace(/<\/?script[^>]*>/ig, '');
+          }
         }
         values.push('data.' + key + ' = ' + json + ';');
       }
       var html = FS(file).replace('//data//', values.join('\n'));
-      html = html.replace('//facebook//', FS('public/js/fb.js'));
+      //html = html.replace('//facebook//', FS('public/js/fb.js'));
       if (req.user && req.user.en)
         html = html.replace(/\/assets\/images\//g, '/assets/images/english/');
       if (cache)
@@ -103,6 +174,8 @@ var callback = (rules, func) =>
     }
 
     res.facebook = (data, file, og, cache) => {
+      writeLog({type: 'facebook', data, file, og});
+
       var values = [];
       for (var key in data) {
         var json = JSON.stringify(data[key]);
@@ -112,7 +185,7 @@ var callback = (rules, func) =>
         values.push('data.' + key + ' = ' + json + ';');
       }
       var html = FS(file).replace('//data//', values.join('\n'));
-      html = html.replace('//facebook//', FS('public/js/fb.js'));
+      //html = html.replace('//facebook//', FS('public/js/fb.js'));
       //if (req.user && req.user.en) html = html.replace(/\/assets\/images\//g, '/assets/images/english/');
       html = html.replace(/=og:title/, og.title);
       html = html.replace(/=og:description/, og.description);
@@ -124,12 +197,17 @@ var callback = (rules, func) =>
       res.end(html);
     }
 
+    res.ok = (data) => {
+      writeLog({type: 'ok', data});
 
-    res.ok = (data) =>
       res.rtn({code: 0, message: 'ok', data: data});
+    };
 
-    res.err = (code, message, error) =>
+    res.err = (code, message, error) => {
+      writeLog({type: 'error', code, message, error});
+
       res.rtn({code: code, message: message, error: error});
+    };
 
     try {
       req.checked = {};
@@ -137,16 +215,13 @@ var callback = (rules, func) =>
       var query = (req.method == 'POST')? req.body: req.query;
       for (var key in rules) {
         // login
-        if (key == '$') { // [type, level, other]
-          if (rules[key] == 1) {
-            if (!req.signedCookies.user_id) throw [-1, '請重新登入！'];
-            req.user = Mongo.get('user', parseInt(req.signedCookies.user_id));
-            req.user.en = !/zh-TW/i.test(req.headers['accept-language']);
+        if (key == '$') { // require user login
+          if (rules[key] == 'user') {
+            // get user from session_key
+            var session = await Mongo.one('session', {session_key: req.session.key});
+            if (!session) return res.redirect('/token/user_login?redirect=' + encodeURIComponent(req.originalUrl));
+            req.user = session.user;
           }
-          else {
-            if (!req.signedCookies.admin) throw [-1, '請重新登入！'];
-          }
-          //req.user = {_id: 1, name: '戴志洋', image: {url: '/assets/images/default.jpg', imgCheck: 'N', imgMemo: ''}};
           continue;
         }
         // optional
@@ -172,9 +247,14 @@ var callback = (rules, func) =>
           throw [-2, "missing parameter '" + key + "'"];
 
         if (rules[key] == 'user') {
-          // get user from token
-          req.user = User.token(value);
-          if (!req.user) throw [-1, '請重新登入！'];
+          // update session_key if provided
+          if (value) req.session.key = value;
+
+          // get user from session_key
+          var session = await Mongo.one('session', {session_key: req.session.key});
+          if (!session) throw [-1, 'Please login again!'];
+          req.user = session.user;
+          if (session.appID) req.appID = session.appID;
         }
         else {
           check(key, value, rules[key], query);
@@ -185,7 +265,7 @@ var callback = (rules, func) =>
       func(req, res, next);
     } catch(e) {
       console.log(e);
-      return res.err(-99, '系統忙碌中請稍候');
+      //return res.err(-99, '系統忙碌中請稍候');
       if (Array.isArray(e))
         return res.err(e[0], e[1]);
       res.err(e.code? e.code: -99, e.message? e.message: 'unknown error', e);
@@ -196,6 +276,8 @@ var api = base => {
   api = require('express').Router();
   api._get = api.get;
   api._post = api.post;
+  api._put = api.put;
+  api._delete = api.delete;
 
   var help = {};
   var unit = {};
@@ -205,7 +287,7 @@ var api = base => {
       func = rules;
       rules = {};
     }
-    help[base + route] = {get: rules};
+    help['GET ' + base + route] = rules;
     api._get(route, callback(rules, func));
     return api;
   };
@@ -215,8 +297,28 @@ var api = base => {
       func = rules;
       rules = {};
     }
-    help[base + route] = {post: rules};
+    help['POST ' + base + route] = rules;
     api._post(route, require('connect-multiparty')(), callback(rules, func));
+    return api;
+  };
+
+  api.put = (route, rules, func) => {
+    if (typeof rules == 'function') {
+      func = rules;
+      rules = {};
+    }
+    help['PUT ' + base + route] = rules;
+    api._put(route, require('connect-multiparty')(), callback(rules, func));
+    return api;
+  };
+
+  api.delete = (route, rules, func) => {
+    if (typeof rules == 'function') {
+      func = rules;
+      rules = {};
+    }
+    help['DELETE + ' + base + route] = rules;
+    api._delete(route, callback(rules, func));
     return api;
   };
 
@@ -238,11 +340,11 @@ var api = base => {
       var http = Post.json;
       for (var path in unit)
         if (unit[path].length == 1)
-          Jobs[base + path] = http(config.uri + base + path, unit[path][0]);
+          Jobs[base + path] = await http(process.env.URI + base + path, unit[path][0]);
         else
           for (var i in unit[path])
-            Jobs[base + path + ':' + i] = http(config.uri + base + path, unit[path][i]);
-      res.json(await(Jobs));
+            Jobs[base + path + ':' + i] = await http(process.env.URI + base + path, unit[path][i]);
+      res.json(Jobs);
     });
     return api;
   };
